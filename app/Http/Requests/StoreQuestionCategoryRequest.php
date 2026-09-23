@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreQuestionRequest extends FormRequest
+class StoreQuestionCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +24,8 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'section_id' => ['required', 'integer', 'exists:sections,id'],
-            'text' => ['required', 'string'],
-            'question_category_id' => ['required', 'integer', 'exists:question_categories,id'],
+            'name' => ['required', 'string', Rule::unique('question_categories', 'name')],
             'order' => ['nullable', 'integer', 'min:0'],
-            'is_required' => ['boolean'],
         ];
     }
 }

@@ -121,10 +121,17 @@
         "search_section": "Cerca una secció per afegir-la…",
         "add_failed": "No s'ha pogut afegir"
     },
-    "category": {
-        "estetica": "Estètica",
-        "funcional_mecanica": "Funcional / Mecànica",
-        "electronica": "Electrònica"
+    "admin_categories": {
+        "title": "Categories de preguntes",
+        "name": "Nom",
+        "questions_count": "Preguntes",
+        "add": "Afegir categoria",
+        "edit": "Editar categoria",
+        "save": "Desa",
+        "cancel": "Cancel·lar",
+        "delete": "Eliminar",
+        "delete_confirm": "Segur que vols eliminar aquesta categoria?",
+        "reorder_hint": "Arrossega les files per canviar l'ordre en què l'Operari veu les categories."
     },
     "admin_sections": {
         "title": "Seccions",

@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Enums\QuestionCategory;
 use App\Models\Equipment;
 use App\Models\Family;
 use App\Models\OrderFabrication;
 use App\Models\Project;
 use App\Models\Question;
+use App\Models\QuestionCategory;
 use App\Models\Section;
 use Illuminate\Database\Seeder;
 
@@ -66,13 +66,13 @@ class ProjectSeeder extends Seeder
                 Question::factory()->create([
                     'section_id' => $section->id,
                     'text' => "L'acabat de {$name} és correcte?",
-                    'category' => QuestionCategory::Estetica,
+                    'question_category_id' => QuestionCategory::firstOrCreate(['name' => 'Estètica'])->id,
                     'order' => 1,
                 ]);
                 Question::factory()->create([
                     'section_id' => $section->id,
                     'text' => "El muntatge de {$name} és correcte?",
-                    'category' => QuestionCategory::FuncionalMecanica,
+                    'question_category_id' => QuestionCategory::firstOrCreate(['name' => 'Funcional / Mecànica'])->id,
                     'order' => 2,
                 ]);
             }

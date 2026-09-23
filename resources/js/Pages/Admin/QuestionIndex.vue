@@ -14,7 +14,7 @@ const { t } = useI18n();
 
 const section = ref(null);
 const questions = ref([]);
-const categories = ['estetica', 'funcional_mecanica', 'electronica'];
+const categories = ref([]);
 
 const formOpen = ref(false);
 const editingId = ref(null);
@@ -22,14 +22,17 @@ const errors = ref({});
 const saving = ref(false);
 
 function blankForm() {
-    return { text: '', category: categories[0], is_required: true };
+    return { text: '', question_category_id: categories.value[0]?.id ?? null, is_required: true };
 }
 
 const form = reactive(blankForm());
 
 async function load() {
-    section.value = await api.get(`/api/sections/${props.sectionId}`);
-    questions.value = await api.get(`/api/questions?section_id=${props.sectionId}`);
+    [section.value, questions.value, categories.value] = await Promise.all([
+        api.get(`/api/sections/${props.sectionId}`),
+        api.get(`/api/questions?section_id=${props.sectionId}`),
+        api.get('/api/question-categories'),
+    ]);
 }
 
 function openCreate() {
@@ -44,7 +47,7 @@ function openEdit(question) {
     errors.value = {};
     Object.assign(form, {
         text: question.text,
-        category: question.category,
+        question_category_id: question.question_category_id,
         is_required: question.is_required,
     });
     formOpen.value = true;
@@ -106,12 +109,12 @@ onMounted(load);
             </div>
 
             <div class="overflow-x-auto rounded-lg bg-white shadow">
-                <div class="min-w-[560px]">
+                <div class="min-w-[720px]">
                     <div class="flex items-center gap-3 border-b px-4 py-2 text-sm text-gray-500">
                         <span class="w-4"></span>
                         <span class="flex-1">{{ t('admin_questions.text') }}</span>
-                        <span class="w-36">{{ t('admin_questions.category') }}</span>
-                        <span class="w-32"></span>
+                        <span class="w-36 shrink-0">{{ t('admin_questions.category') }}</span>
+                        <span class="ml-8 w-48 shrink-0"></span>
                     </div>
                     <VueDraggable
                         v-model="questions"
@@ -123,8 +126,8 @@ onMounted(load);
                         <div v-for="question in questions" :key="question.id" class="flex items-center gap-3 border-b px-4 py-2">
                             <span class="drag-handle w-4 cursor-move text-gray-300">⠿</span>
                             <span class="flex-1 text-sm font-medium">{{ question.text }}</span>
-                            <span class="w-36 text-sm text-gray-600">{{ t(`category.${question.category}`) }}</span>
-                            <span class="flex w-32 justify-end gap-2">
+                            <span class="w-36 shrink-0 text-sm text-gray-600">{{ question.category?.name }}</span>
+                            <span class="ml-8 flex w-48 shrink-0 justify-end gap-4 whitespace-nowrap">
                                 <Button variant="ghost" @click="openEdit(question)">
                                     {{ t('admin_questions.edit') }}
                                 </Button>
@@ -152,9 +155,10 @@ onMounted(load);
 
                 <div>
                     <label class="mb-1 block text-sm font-medium text-gray-700">{{ t('admin_questions.category') }}</label>
-                    <select v-model="form.category" class="w-full rounded border border-gray-300 px-3 py-2">
-                        <option v-for="cat in categories" :key="cat" :value="cat">{{ t(`category.${cat}`) }}</option>
+                    <select v-model="form.question_category_id" class="w-full rounded border border-gray-300 px-3 py-2">
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
                     </select>
+                    <p v-if="errors.question_category_id" class="mt-1 text-sm text-red-600">{{ errors.question_category_id[0] }}</p>
                 </div>
 
                 <label class="flex items-center gap-2 text-sm text-gray-700">

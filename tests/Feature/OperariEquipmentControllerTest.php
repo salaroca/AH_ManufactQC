@@ -7,6 +7,7 @@ use App\Models\Defect;
 use App\Models\Equipment;
 use App\Models\OrderFabrication;
 use App\Models\Question;
+use App\Models\QuestionCategory;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -54,6 +55,20 @@ it('shows equipment with sections, questions and existing answers', function () 
         ->and($payload['sections'][0]['questions'][0]['answer']['response'])->toBe('yes');
 });
 
+it('returns each question with its category name and order, so the Operari groups them by the category catalog', function () {
+    $equipment = Equipment::factory()->create();
+    $section = Section::factory()->create();
+    $equipment->project->sections()->attach($section);
+    $category = QuestionCategory::factory()->create(['name' => 'Pantalles', 'order' => 7]);
+    Question::factory()->create(['section_id' => $section->id, 'question_category_id' => $category->id]);
+
+    $response = $this->getJson("/operari/api/equipment/{$equipment->id}");
+
+    $response->assertOk()
+        ->assertJsonPath('sections.0.questions.0.category.name', 'Pantalles')
+        ->assertJsonPath('sections.0.questions.0.category.order', 7);
+});
+
 it('includes the answer id and its recorded defects, so a re-opened defect question shows what was already written', function () {
     $equipment = Equipment::factory()->create();
     $section = Section::factory()->create(['order' => 1]);
@@ -95,7 +110,7 @@ it('includes the responsible production operator\'s name alongside a recorded de
         'question_id' => $question->id,
         'response' => AnswerResponse::Defect,
     ]);
-    $operator = \App\Models\User::factory()->operariProduccio()->create(['name' => 'Joan']);
+    $operator = User::factory()->operariProduccio()->create(['name' => 'Joan']);
     Defect::factory()->create([
         'equipment_id' => $equipment->id,
         'answer_id' => $answer->id,

@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\QuestionCategory;
 use App\Models\Question;
+use App\Models\QuestionCategory;
 use App\Models\Section;
 use App\Models\User;
 
@@ -11,19 +11,20 @@ beforeEach(function () {
 
 it('creates a question tied to a section, with a category', function () {
     $section = Section::factory()->create();
+    $category = QuestionCategory::factory()->create(['name' => 'Soldadura']);
 
     $response = $this->postJson('/api/questions', [
         'section_id' => $section->id,
         'text' => 'Acabat correcte?',
-        'category' => QuestionCategory::Estetica->value,
+        'question_category_id' => $category->id,
         'order' => 1,
         'is_required' => true,
     ]);
 
-    $response->assertCreated();
+    $response->assertCreated()->assertJsonPath('category.name', 'Soldadura');
     $question = Question::where('section_id', $section->id)->first();
     expect($question)->not->toBeNull()
-        ->and($question->category)->toBe(QuestionCategory::Estetica);
+        ->and($question->category->is($category))->toBeTrue();
 });
 
 it('rejects creating a question without a category', function () {
@@ -34,7 +35,33 @@ it('rejects creating a question without a category', function () {
         'text' => 'Acabat correcte?',
     ]);
 
-    $response->assertUnprocessable()->assertJsonValidationErrors('category');
+    $response->assertUnprocessable()->assertJsonValidationErrors('question_category_id');
+});
+
+it('rejects creating a question with a category that does not exist', function () {
+    $section = Section::factory()->create();
+
+    $response = $this->postJson('/api/questions', [
+        'section_id' => $section->id,
+        'text' => 'Acabat correcte?',
+        'question_category_id' => 999999,
+    ]);
+
+    $response->assertUnprocessable()->assertJsonValidationErrors('question_category_id');
+});
+
+it('changes the category of an existing question', function () {
+    $question = Question::factory()->create();
+    $newCategory = QuestionCategory::factory()->create();
+
+    $response = $this->putJson("/api/questions/{$question->id}", [
+        'section_id' => $question->section_id,
+        'text' => $question->text,
+        'question_category_id' => $newCategory->id,
+    ]);
+
+    $response->assertOk()->assertJsonPath('category.id', $newCategory->id);
+    expect($question->fresh()->question_category_id)->toBe($newCategory->id);
 });
 
 it('rejects creating a question without a valid section_id', function () {

@@ -2,7 +2,6 @@
 
 use App\Enums\AnswerResponse;
 use App\Enums\EquipmentStatus;
-use App\Enums\QuestionCategory;
 use App\Models\Answer;
 use App\Models\Defect;
 use App\Models\Equipment;
@@ -11,6 +10,7 @@ use App\Models\OrderFabrication;
 use App\Models\Photo;
 use App\Models\Project;
 use App\Models\Question;
+use App\Models\QuestionCategory;
 use App\Models\Section;
 use Illuminate\Support\Carbon;
 
@@ -128,8 +128,10 @@ it('preserves the order Sections were attached to a Project in, via the pivot or
     expect($project->sections->pluck('name')->all())->toBe(['USB', 'AH17DX2']);
 });
 
-it('casts Question category to the QuestionCategory enum', function () {
-    $question = Question::factory()->create(['category' => QuestionCategory::Electronica]);
+it('links a Question to its QuestionCategory, and the category to its questions', function () {
+    $category = QuestionCategory::factory()->create();
+    $question = Question::factory()->create(['question_category_id' => $category->id]);
 
-    expect($question->category)->toBe(QuestionCategory::Electronica);
+    expect($question->category->is($category))->toBeTrue()
+        ->and($category->questions->pluck('id')->all())->toBe([$question->id]);
 });

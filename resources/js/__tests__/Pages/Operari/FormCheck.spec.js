@@ -39,7 +39,7 @@ function equipmentResponse() {
                 id: 1,
                 name: 'QUALITAT',
                 questions: [
-                    { id: 10, text: 'Acabat correcte?', category: 'estetica', order: 1, is_required: true, answer: null },
+                    { id: 10, text: 'Acabat correcte?', category: { id: 1, name: 'Estètica', order: 0 }, order: 1, is_required: true, answer: null },
                 ],
             },
         ],
@@ -59,6 +59,7 @@ describe('FormCheck page', () => {
 
         expect(wrapper.text()).toContain('QUALITAT');
         expect(wrapper.text()).toContain('Acabat correcte?');
+        expect(wrapper.text()).toContain('Estètica');
     });
 
     it('saves an answer when a response button is clicked', async () => {

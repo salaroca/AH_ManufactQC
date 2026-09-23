@@ -17,6 +17,7 @@ class QuestionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $questions = Question::query()
+            ->with('category')
             ->when($request->filled('section_id'), fn ($query) => $query->where('section_id', $request->integer('section_id')))
             ->orderBy('order')
             ->get();
@@ -28,19 +29,19 @@ class QuestionController extends Controller
     {
         $question = Question::create($request->validated());
 
-        return response()->json($question, 201);
+        return response()->json($question->load('category'), 201);
     }
 
     public function show(Question $question): JsonResponse
     {
-        return response()->json($question);
+        return response()->json($question->load('category'));
     }
 
     public function update(UpdateQuestionRequest $request, Question $question): JsonResponse
     {
         $question->update($request->validated());
 
-        return response()->json($question);
+        return response()->json($question->load('category'));
     }
 
     public function destroy(Question $question): Response
@@ -62,7 +63,7 @@ class QuestionController extends Controller
         }
 
         return response()->json(
-            $section->questions()->orderBy('order')->get()
+            $section->questions()->with('category')->orderBy('order')->get()
         );
     }
 }

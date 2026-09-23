@@ -2,15 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Question;
 use App\Models\QuestionCategory;
-use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Question>
+ * @extends Factory<QuestionCategory>
  */
-class QuestionFactory extends Factory
+class QuestionCategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,11 +18,8 @@ class QuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'section_id' => Section::factory(),
-            'text' => $this->faker->sentence().'?',
-            'question_category_id' => QuestionCategory::factory(),
+            'name' => $this->faker->unique()->bothify('CAT-????'),
             'order' => 0,
-            'is_required' => true,
         ];
     }
 }
