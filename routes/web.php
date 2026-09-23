@@ -38,6 +38,10 @@ Route::get('/admin/sections/{section}/questions', function (Section $section) {
     return Inertia::render('Admin/QuestionIndex', ['sectionId' => $section->id]);
 })->middleware(['auth', EnsureAdminOrQc::class])->name('admin.sections.questions');
 
+Route::get('/admin/question-bank', function () {
+    return Inertia::render('Admin/QuestionBankIndex');
+})->middleware(['auth', EnsureAdminOrQc::class])->name('admin.question-bank');
+
 Route::get('/admin/question-categories', function () {
     return Inertia::render('Admin/QuestionCategoryIndex');
 })->middleware(['auth', EnsureAdminOrQc::class])->name('admin.question-categories');

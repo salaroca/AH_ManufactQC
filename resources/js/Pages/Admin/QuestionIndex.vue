@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { useI18n } from 'vue-i18n';
 import AdminSidebar from '../../Components/AdminSidebar.vue';
@@ -22,10 +22,52 @@ const errors = ref({});
 const saving = ref(false);
 
 function blankForm() {
-    return { text: '', question_category_id: categories.value[0]?.id ?? null, is_required: true };
+    return { text: '', question_category_id: categories.value[0]?.id ?? null, is_required: true, save_to_bank: false };
 }
 
 const form = reactive(blankForm());
+const editingFromBank = ref(false);
+
+const bank = reactive({ open: false, templates: [], selected: [], search: '', category: '', adding: false });
+
+// Plantilles del banc que aquesta secció ja té copiades (no es poden tornar a afegir).
+const templateIdsInSection = computed(() => new Set(questions.value.map((question) => question.question_template_id).filter(Boolean)));
+
+const filteredBankTemplates = computed(() => {
+    const needle = bank.search.trim().toLowerCase();
+
+    return bank.templates.filter(
+        (template) =>
+            (!bank.category || template.question_category_id === bank.category) &&
+            (!needle || template.text.toLowerCase().includes(needle)),
+    );
+});
+
+const selectableVisibleIds = computed(() =>
+    filteredBankTemplates.value.filter((template) => !templateIdsInSection.value.has(template.id)).map((template) => template.id),
+);
+
+async function openBank() {
+    Object.assign(bank, { open: true, selected: [], search: '', category: '' });
+    bank.templates = await api.get('/api/question-templates');
+}
+
+function selectAllVisible() {
+    bank.selected = [...new Set([...bank.selected, ...selectableVisibleIds.value])];
+}
+
+async function addFromBank() {
+    bank.adding = true;
+
+    try {
+        questions.value = await api.post(`/api/sections/${props.sectionId}/questions/from-templates`, {
+            template_ids: bank.selected,
+        });
+        bank.open = false;
+    } finally {
+        bank.adding = false;
+    }
+}
 
 async function load() {
     [section.value, questions.value, categories.value] = await Promise.all([
@@ -37,6 +79,7 @@ async function load() {
 
 function openCreate() {
     editingId.value = null;
+    editingFromBank.value = false;
     errors.value = {};
     Object.assign(form, blankForm());
     formOpen.value = true;
@@ -44,11 +87,13 @@ function openCreate() {
 
 function openEdit(question) {
     editingId.value = question.id;
+    editingFromBank.value = question.question_template_id !== null;
     errors.value = {};
     Object.assign(form, {
         text: question.text,
         question_category_id: question.question_category_id,
         is_required: question.is_required,
+        save_to_bank: false,
     });
     formOpen.value = true;
 }
@@ -103,9 +148,14 @@ onMounted(load);
                 <h1 class="text-lg font-semibold text-gray-800">
                     {{ t('admin_questions.title') }} — {{ section?.name }}
                 </h1>
-                <Button @click="openCreate">
-                    {{ t('admin_questions.add') }}
-                </Button>
+                <div class="flex gap-2">
+                    <Button variant="outline" @click="openBank">
+                        {{ t('admin_questions.add_from_bank') }}
+                    </Button>
+                    <Button @click="openCreate">
+                        {{ t('admin_questions.add') }}
+                    </Button>
+                </div>
             </div>
 
             <div class="overflow-x-auto rounded-lg bg-white shadow">
@@ -166,12 +216,79 @@ onMounted(load);
                     {{ t('admin_questions.required') }}
                 </label>
 
+                <p v-if="editingFromBank" class="text-sm text-gray-500">{{ t('admin_questions.in_bank') }}</p>
+                <label v-else class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="checkbox" v-model="form.save_to_bank" />
+                    {{ t('admin_questions.save_to_bank') }}
+                </label>
+
                 <div class="flex justify-end gap-2 pt-2">
                     <Button variant="ghost" @click="closeForm">
                         {{ t('admin_questions.cancel') }}
                     </Button>
                     <Button :disabled="saving" @click="save">
                         {{ t('admin_questions.save') }}
+                    </Button>
+                </div>
+            </div>
+        </div>
+        <div v-if="bank.open" class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+            <div class="flex max-h-[85vh] w-full max-w-2xl flex-col gap-3 rounded-lg bg-white p-6 shadow-lg">
+                <h2 class="text-base font-semibold text-gray-800">{{ t('admin_questions.bank_modal_title') }}</h2>
+
+                <p v-if="!bank.templates.length" class="text-sm text-gray-500">{{ t('admin_questions.bank_empty') }}</p>
+
+                <template v-else>
+                    <div class="flex flex-wrap gap-2">
+                        <input
+                            v-model="bank.search"
+                            type="search"
+                            :placeholder="t('admin_bank.search')"
+                            class="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                        <select v-model="bank.category" class="rounded border border-gray-300 px-3 py-2 text-sm">
+                            <option value="">{{ t('admin_bank.all_categories') }}</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <Button variant="ghost" :disabled="!selectableVisibleIds.length" @click="selectAllVisible">
+                            {{ t('admin_questions.select_all_visible') }}
+                        </Button>
+                    </div>
+
+                    <ul class="min-h-0 flex-1 divide-y overflow-y-auto rounded border border-gray-200">
+                        <li v-for="template in filteredBankTemplates" :key="template.id">
+                            <label
+                                class="flex items-center gap-3 px-3 py-2 text-sm"
+                                :class="templateIdsInSection.has(template.id) ? 'text-gray-400' : 'cursor-pointer hover:bg-gray-50'"
+                            >
+                                <input
+                                    v-if="templateIdsInSection.has(template.id)"
+                                    type="checkbox"
+                                    checked
+                                    disabled
+                                />
+                                <input v-else v-model="bank.selected" type="checkbox" :value="template.id" />
+                                <span class="flex-1">{{ template.text }}</span>
+                                <span class="shrink-0 text-xs text-gray-500">
+                                    {{ templateIdsInSection.has(template.id) ? t('admin_questions.already_added') : template.category?.name }}
+                                </span>
+                            </label>
+                        </li>
+                        <li v-if="!filteredBankTemplates.length" class="px-3 py-4 text-center text-sm text-gray-400">
+                            {{ t('admin_bank.no_matches') }}
+                        </li>
+                    </ul>
+                </template>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <Button variant="ghost" @click="bank.open = false">
+                        {{ t('admin_questions.cancel') }}
+                    </Button>
+                    <Button :disabled="!bank.selected.length || bank.adding" @click="addFromBank">
+                        {{ t('admin_questions.bank_add', { count: bank.selected.length }) }}
                     </Button>
                 </div>
             </div>

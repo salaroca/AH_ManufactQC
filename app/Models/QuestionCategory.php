@@ -18,4 +18,9 @@ class QuestionCategory extends Model
     {
         return $this->hasMany(Question::class);
     }
+
+    public function templates(): HasMany
+    {
+        return $this->hasMany(QuestionTemplate::class);
+    }
 }

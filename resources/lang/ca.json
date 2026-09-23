@@ -24,7 +24,11 @@
         "title": "Cerca l'OF",
         "order_number": "Número d'OF",
         "no_results": "Sense resultats",
-        "equipment_count": "{count} equips"
+        "equipment_count": "{count} equips",
+        "finished": "Acabada",
+        "pending_count": "Falta {count} equip per revisar | Falten {count} equips per revisar",
+        "no_equipment": "Sense equips",
+        "not_started": "Per començar"
     },
     "form": {
         "global_observations": "Observacions del projecte",
@@ -96,7 +100,7 @@
         "total_defects": "Defectes totals",
         "defects_by_type": "Defectes per tipus",
         "responsibilities": "Responsabilitats",
-        "trends": "% defectes per secció",
+        "trends": "% defectes per part de descripció",
         "recent_photos": "Últimes fotos",
         "no_data": "Sense dades",
         "category": "Categoria",
@@ -117,8 +121,8 @@
         "delete": "Eliminar",
         "delete_confirm": "Segur que vols eliminar aquest projecte? També s'eliminaran les seves OF i equips.",
         "new_family": "Nova família…",
-        "new_section": "Nova secció…",
-        "search_section": "Cerca una secció per afegir-la…",
+        "new_section": "Nova part…",
+        "search_section": "Cerca una part de descripció per afegir-la…",
         "add_failed": "No s'ha pogut afegir"
     },
     "admin_categories": {
@@ -134,20 +138,20 @@
         "reorder_hint": "Arrossega les files per canviar l'ordre en què l'Operari veu les categories."
     },
     "admin_sections": {
-        "title": "Seccions",
+        "title": "Parts de descripció",
         "name": "Nom",
-        "description": "Descripció",
+        "description": "Detall",
         "questions_count": "Preguntes",
-        "add": "Afegir secció",
-        "edit": "Editar secció",
+        "add": "Afegir part",
+        "edit": "Editar part",
         "manage_questions": "Gestionar preguntes",
         "save": "Desa",
         "cancel": "Cancel·lar",
         "delete": "Eliminar",
-        "delete_confirm": "Segur que vols eliminar aquesta secció? També s'eliminaran les seves preguntes."
+        "delete_confirm": "Segur que vols eliminar aquesta part? També s'eliminaran les seves preguntes."
     },
     "admin_questions": {
-        "title": "Preguntes de la secció",
+        "title": "Preguntes de la part",
         "text": "Pregunta",
         "category": "Categoria",
         "required": "Obligatòria",
@@ -156,7 +160,35 @@
         "save": "Desa",
         "cancel": "Cancel·lar",
         "delete": "Eliminar",
-        "delete_confirm": "Segur que vols eliminar aquesta pregunta?"
+        "delete_confirm": "Segur que vols eliminar aquesta pregunta?",
+        "add_from_bank": "Afegir del banc",
+        "bank_modal_title": "Afegir preguntes del banc",
+        "bank_add": "Afegir ({count})",
+        "already_added": "Ja hi és",
+        "select_all_visible": "Seleccionar-les totes",
+        "save_to_bank": "Desa-la també al banc de preguntes",
+        "in_bank": "Ja és al banc de preguntes",
+        "bank_empty": "El banc de preguntes és buit. Omple'l des de «Banc de preguntes» al menú, o marcant «Desa-la també al banc» en crear una pregunta."
+    },
+    "admin_bank": {
+        "title": "Banc de preguntes",
+        "hint": "Les preguntes del banc es poden afegir a qualsevol part de descripció amb «Afegir del banc». Si edites una pregunta aquí, no es modifiquen les que ja s'han afegit a parts.",
+        "text": "Pregunta",
+        "category": "Categoria",
+        "required": "Obligatòria",
+        "yes": "Sí",
+        "no": "No",
+        "used_in": "Parts",
+        "add": "Afegir al banc",
+        "edit": "Editar pregunta",
+        "save": "Desa",
+        "cancel": "Cancel·lar",
+        "delete": "Eliminar",
+        "delete_confirm": "Segur que vols eliminar aquesta pregunta del banc? Les parts que ja la tenen la conservaran.",
+        "search": "Cerca una pregunta",
+        "all_categories": "Totes les categories",
+        "empty": "El banc encara és buit.",
+        "no_matches": "Cap pregunta coincideix amb la cerca."
     },
     "admin_users": {
         "title": "Usuaris",
@@ -212,5 +244,10 @@
         "generate_max_hint": "Com a màxim {max} equips de cop. Si en necessites més, genera'ls en diversos cops.",
         "generate_progress": "Generant… {done} de {total}",
         "generate_stop": "Aturar"
+    },
+    "sidebar": {
+        "production": "Producció",
+        "questionnaires": "Qüestionaris",
+        "administration": "Administració"
     }
 }

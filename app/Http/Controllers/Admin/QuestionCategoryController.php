@@ -37,9 +37,9 @@ class QuestionCategoryController extends Controller
 
     public function destroy(QuestionCategory $questionCategory): Response
     {
-        if ($questionCategory->questions()->exists()) {
+        if ($questionCategory->questions()->exists() || $questionCategory->templates()->exists()) {
             throw ValidationException::withMessages([
-                'category' => 'Aquesta categoria està en ús per alguna pregunta i no es pot eliminar.',
+                'category' => 'Aquesta categoria està en ús per alguna pregunta (o pel banc de preguntes) i no es pot eliminar.',
             ]);
         }
 

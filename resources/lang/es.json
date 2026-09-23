@@ -24,7 +24,11 @@
         "title": "Busca la OF",
         "order_number": "Número de OF",
         "no_results": "Sin resultados",
-        "equipment_count": "{count} equipos"
+        "equipment_count": "{count} equipos",
+        "finished": "Terminada",
+        "pending_count": "Falta {count} equipo por revisar | Faltan {count} equipos por revisar",
+        "no_equipment": "Sin equipos",
+        "not_started": "Por empezar"
     },
     "form": {
         "global_observations": "Observaciones del proyecto",
@@ -96,7 +100,7 @@
         "total_defects": "Defectos totales",
         "defects_by_type": "Defectos por tipo",
         "responsibilities": "Responsabilidades",
-        "trends": "% defectos por sección",
+        "trends": "% defectos por parte de descripción",
         "recent_photos": "Últimas fotos",
         "no_data": "Sin datos",
         "category": "Categoría",
@@ -117,8 +121,8 @@
         "delete": "Eliminar",
         "delete_confirm": "¿Seguro que quieres eliminar este proyecto? También se eliminarán sus OF y equipos.",
         "new_family": "Nueva familia…",
-        "new_section": "Nueva sección…",
-        "search_section": "Busca una sección para añadirla…",
+        "new_section": "Nueva parte…",
+        "search_section": "Busca una parte de descripción para añadirla…",
         "add_failed": "No se ha podido añadir"
     },
     "admin_categories": {
@@ -134,20 +138,20 @@
         "reorder_hint": "Arrastra las filas para cambiar el orden en que el Operario ve las categorías."
     },
     "admin_sections": {
-        "title": "Secciones",
+        "title": "Partes de descripción",
         "name": "Nombre",
-        "description": "Descripción",
+        "description": "Detalle",
         "questions_count": "Preguntas",
-        "add": "Añadir sección",
-        "edit": "Editar sección",
+        "add": "Añadir parte",
+        "edit": "Editar parte",
         "manage_questions": "Gestionar preguntas",
         "save": "Guardar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
-        "delete_confirm": "¿Seguro que quieres eliminar esta sección? También se eliminarán sus preguntas."
+        "delete_confirm": "¿Seguro que quieres eliminar esta parte? También se eliminarán sus preguntas."
     },
     "admin_questions": {
-        "title": "Preguntas de la sección",
+        "title": "Preguntas de la parte",
         "text": "Pregunta",
         "category": "Categoría",
         "required": "Obligatoria",
@@ -156,7 +160,35 @@
         "save": "Guardar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
-        "delete_confirm": "¿Seguro que quieres eliminar esta pregunta?"
+        "delete_confirm": "¿Seguro que quieres eliminar esta pregunta?",
+        "add_from_bank": "Añadir del banco",
+        "bank_modal_title": "Añadir preguntas del banco",
+        "bank_add": "Añadir ({count})",
+        "already_added": "Ya está",
+        "select_all_visible": "Seleccionarlas todas",
+        "save_to_bank": "Guardarla también en el banco de preguntas",
+        "in_bank": "Ya está en el banco de preguntas",
+        "bank_empty": "El banco de preguntas está vacío. Llénalo desde «Banco de preguntas» en el menú, o marcando «Guardarla también en el banco» al crear una pregunta."
+    },
+    "admin_bank": {
+        "title": "Banco de preguntas",
+        "hint": "Las preguntas del banco se pueden añadir a cualquier parte de descripción con «Añadir del banco». Si editas una pregunta aquí, no se modifican las que ya se han añadido a partes.",
+        "text": "Pregunta",
+        "category": "Categoría",
+        "required": "Obligatoria",
+        "yes": "Sí",
+        "no": "No",
+        "used_in": "Partes",
+        "add": "Añadir al banco",
+        "edit": "Editar pregunta",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "delete_confirm": "¿Seguro que quieres eliminar esta pregunta del banco? Las partes que ya la tienen la conservarán.",
+        "search": "Busca una pregunta",
+        "all_categories": "Todas las categorías",
+        "empty": "El banco todavía está vacío.",
+        "no_matches": "Ninguna pregunta coincide con la búsqueda."
     },
     "admin_users": {
         "title": "Usuarios",
@@ -212,5 +244,10 @@
         "generate_max_hint": "Como máximo {max} equipos de golpe. Si necesitas más, genéralos en varias veces.",
         "generate_progress": "Generando… {done} de {total}",
         "generate_stop": "Detener"
+    },
+    "sidebar": {
+        "production": "Producción",
+        "questionnaires": "Cuestionarios",
+        "administration": "Administración"
     }
 }

@@ -167,8 +167,8 @@ onMounted(load);
 <template>
     <LanguageSelector />
 
-    <div v-if="equipment" class="min-h-screen bg-gray-50 px-4 py-10">
-        <div class="mx-auto max-w-xl space-y-6 rounded-lg bg-white p-6 shadow">
+    <div v-if="equipment" class="min-h-screen bg-gray-50 px-4 pb-10 pt-16">
+        <div class="mx-auto max-w-5xl space-y-6 rounded-lg bg-white p-6 shadow">
             <OperariNav :back-href="`/operari/order-fabrications/${equipment.order_fabrication_id}/equipment-list`" />
 
             <div>

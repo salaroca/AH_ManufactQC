@@ -28,6 +28,7 @@ class UpdateQuestionRequest extends FormRequest
             'question_category_id' => ['required', 'integer', 'exists:question_categories,id'],
             'order' => ['nullable', 'integer', 'min:0'],
             'is_required' => ['boolean'],
+            'save_to_bank' => ['boolean'],
         ];
     }
 }

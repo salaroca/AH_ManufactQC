@@ -8,6 +8,26 @@ import { setLocale } from '../i18n';
 const { t, locale } = useI18n();
 const open = ref(false);
 
+const navGroups = [
+    { title: null, links: [{ href: '/admin/dashboard', label: 'dashboard.title' }] },
+    {
+        title: 'sidebar.production',
+        links: [
+            { href: '/admin/projects', label: 'admin_projects.title' },
+            { href: '/admin/order-fabrications', label: 'admin_order_fabrications.title' },
+        ],
+    },
+    {
+        title: 'sidebar.questionnaires',
+        links: [
+            { href: '/admin/sections', label: 'admin_sections.title' },
+            { href: '/admin/question-bank', label: 'admin_bank.title' },
+            { href: '/admin/question-categories', label: 'admin_categories.title' },
+        ],
+    },
+    { title: 'sidebar.administration', links: [{ href: '/admin/users', label: 'admin_users.title' }] },
+];
+
 function logout() {
     router.post('/logout');
 }
@@ -41,49 +61,23 @@ function logout() {
             </button>
         </div>
 
-        <nav class="flex-1 space-y-1 px-2 py-3">
-            <Link
-                href="/admin/dashboard"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('dashboard.title') }}
-            </Link>
-            <Link
-                href="/admin/projects"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('admin_projects.title') }}
-            </Link>
-            <Link
-                href="/admin/sections"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('admin_sections.title') }}
-            </Link>
-            <Link
-                href="/admin/question-categories"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('admin_categories.title') }}
-            </Link>
-            <Link
-                href="/admin/order-fabrications"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('admin_order_fabrications.title') }}
-            </Link>
-            <Link
-                href="/admin/users"
-                class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                @click="open = false"
-            >
-                {{ t('admin_users.title') }}
-            </Link>
+        <nav class="flex-1 overflow-y-auto px-2 py-3">
+            <div v-for="(group, index) in navGroups" :key="index" :class="index > 0 ? 'mt-3 border-t pt-3' : ''">
+                <p v-if="group.title" class="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {{ t(group.title) }}
+                </p>
+                <div class="space-y-1">
+                    <Link
+                        v-for="link in group.links"
+                        :key="link.href"
+                        :href="link.href"
+                        class="block rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                        @click="open = false"
+                    >
+                        {{ t(link.label) }}
+                    </Link>
+                </div>
+            </div>
         </nav>
 
         <div class="space-y-2 border-t p-2">

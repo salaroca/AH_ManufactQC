@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddQuestionsFromTemplatesRequest;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
 use App\Models\Question;
+use App\Models\QuestionTemplate;
 use App\Models\Section;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,7 +29,11 @@ class QuestionController extends Controller
 
     public function store(StoreQuestionRequest $request): JsonResponse
     {
-        $question = Question::create($request->validated());
+        $question = Question::create($request->safe()->except('save_to_bank'));
+
+        if ($request->boolean('save_to_bank')) {
+            $question->saveToBank();
+        }
 
         return response()->json($question->load('category'), 201);
     }
@@ -39,7 +45,11 @@ class QuestionController extends Controller
 
     public function update(UpdateQuestionRequest $request, Question $question): JsonResponse
     {
-        $question->update($request->validated());
+        $question->update($request->safe()->except('save_to_bank'));
+
+        if ($request->boolean('save_to_bank')) {
+            $question->saveToBank();
+        }
 
         return response()->json($question->load('category'));
     }
@@ -49,6 +59,28 @@ class QuestionController extends Controller
         $question->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * Copia preguntes del banc a la secció, al final de la llista. Les que la secció ja
+     * té (copiades abans de la mateixa plantilla) es descarten per no duplicar-les.
+     */
+    public function storeFromTemplates(AddQuestionsFromTemplatesRequest $request, Section $section): JsonResponse
+    {
+        $alreadyInSection = $section->questions()->whereNotNull('question_template_id')->pluck('question_template_id');
+        $nextOrder = ($section->questions()->max('order') ?? -1) + 1;
+
+        QuestionTemplate::whereIn('id', $request->validated('template_ids'))
+            ->whereNotIn('id', $alreadyInSection)
+            ->get()
+            ->sortBy(fn (QuestionTemplate $template) => array_search($template->id, $request->validated('template_ids')))
+            ->each(function (QuestionTemplate $template) use ($section, &$nextOrder) {
+                $template->copyToSection($section, $nextOrder++);
+            });
+
+        return response()->json(
+            $section->questions()->with('category')->orderBy('order')->get()
+        );
     }
 
     public function reorder(Request $request, Section $section): JsonResponse

@@ -98,7 +98,7 @@ async function save(keepOpen) {
 
 <template>
     <div v-if="open" class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
-        <div class="w-full max-w-sm space-y-3 rounded-lg bg-white p-6 shadow-lg">
+        <div class="w-full max-w-lg space-y-3 rounded-lg bg-white p-6 shadow-lg">
             <h2 class="text-base font-semibold text-gray-800">
                 {{ editingDefect ? t('defect.edit_title') : t('defect.title') }}
             </h2>
