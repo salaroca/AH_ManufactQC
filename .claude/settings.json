@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(git push:*)",
+      "Read(./.env)"
+    ]
+  }
+}
